@@ -39,7 +39,8 @@ if [[ $1 == "pull" ]]; then
   echo "========================================================================"
   mkdir -p ${BACKUP_DIR}
   for item in "${FILE_LST[@]}"; do
-    cp -f item "${BACKUP_DIR}"
+    cp -f ${item} "${BACKUP_DIR}"
+    echo "Backup: ${BACKUP_DIR} <- ${item}"
   done
 
   # Pull source from github
