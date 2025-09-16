@@ -52,10 +52,10 @@ if [[ $1 == "pull" ]]; then
   echo "========================================================================"
   git pull  || { echo "[Error]: git pull failed! Exiting."; exit 1; }
   for ((i=0; i<${#FILE_TARGET_LST[@]}; i++)) do
-    target="${FILE_TARGET_LST[$i]}"
+    source="${FILE_TARGET_LST[$i]}"
     dest="${FILE_LST[$i]}"
-    cp -rf "${CONFIG_DIR}/${target}" "$dest"
-    echo "Update: ${dest} <- ${CONFIG_DIR}/${target}"
+    cp -rf "${CONFIG_DIR}/${source}" "$dest"
+    echo "Update: ${dest} <- ${CONFIG_DIR}/${source}"
   done
 
 elif [[ $1 == "push" ]]; then
@@ -66,9 +66,13 @@ elif [[ $1 == "push" ]]; then
   echo "========================================================================"
   for ((i=0; i<${#FILE_TARGET_LST[@]}; i++)) do
     target="${FILE_TARGET_LST[$i]}"
-    dest="${FILE_LST[$i]}"
-    cp -rf "$dest" "${CONFIG_DIR}/${target}"
-    echo "Update: ${dest} -> ${CONFIG_DIR}/${target}"
+    source="${FILE_LST[$i]}"
+    if [[ -d ${source} ]]; then
+      rsync -a --exclude='.git' "$source/" "${CONFIG_DIR}/${target}"
+    else
+      cp -rf "$source" "${CONFIG_DIR}/${target}"
+    fi
+    echo "Update: ${source} -> ${CONFIG_DIR}/${target}"
   done
 
   cd "${CONFIG_DIR}"
