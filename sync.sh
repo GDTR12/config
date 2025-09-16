@@ -58,7 +58,7 @@ if [[ $1 == "pull" ]]; then
     dest="${FILE_LST[$i]}"
     dest_dir=$(dirname ${dest})
     mkdir -p ${dest_dir}
-    cp -rf "${CONFIG_DIR}/${source}" "$dest"
+    cp -rf "${CONFIG_DIR}/${source}" "${dest_dir}"
     echo "Update: ${dest} <- ${CONFIG_DIR}/${source}"
   done
 
