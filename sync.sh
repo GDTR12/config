@@ -69,7 +69,7 @@ elif [[ $1 == "push" ]]; then
 
   cd "${CONFIG_DIR}"
   git add .
-  git diff
+  git diff --cached
   git commit -m "$2"
   git push
 fi
