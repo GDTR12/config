@@ -42,8 +42,10 @@ if [[ $1 == "pull" ]]; then
   echo "========================================================================"
   mkdir -p ${BACKUP_DIR}
   for item in "${FILE_LST[@]}"; do
-    cp -rf ${item} "${BACKUP_DIR}"
-    echo "Backup: ${BACKUP_DIR} <- ${item}"
+    if [[ -f ${item} ]]; then
+      cp -rf ${item} "${BACKUP_DIR}"
+      echo "Backup: ${BACKUP_DIR} <- ${item}"
+    fi
   done
 
   # Pull source from github
@@ -54,6 +56,8 @@ if [[ $1 == "pull" ]]; then
   for ((i=0; i<${#FILE_TARGET_LST[@]}; i++)) do
     source="${FILE_TARGET_LST[$i]}"
     dest="${FILE_LST[$i]}"
+    dest_dir=$(dirname ${dest})
+    mkdir -p ${dest_dir}
     cp -rf "${CONFIG_DIR}/${source}" "$dest"
     echo "Update: ${dest} <- ${CONFIG_DIR}/${source}"
   done
