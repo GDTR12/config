@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e # Exit when error occured
 
 USER_HOME=$(eval echo "~$SUDO_USER")
 CONFIG_DIR="/tmp/${SUDO_USER}_config"
@@ -9,12 +10,14 @@ SCRIPT_PATH=$(realpath "$0")
 FILE_LST=(
   "${USER_HOME}/.config/kitty/kitty.conf"
   "${USER_HOME}/.tmux.conf"
+  "${USER_HOME}/.config/nvim"
   ${SCRIPT_PATH}
 )
 
 FILE_TARGET_LST=(
   "kitty.conf"
   ".tmux.conf"
+  "nvim"
   "sync.sh"
 )
 
@@ -26,7 +29,7 @@ if [[ -d "${CONFIG_DIR}/.git" ]]; then
 else
   rm -rf ${CONFIG_DIR}
   mkdir -p ${CONFIG_DIR}
-  git clone git@github.com:GDTR12/config.git "${CONFIG_DIR}"
+  git clone git@github.com:GDTR12/config.git "${CONFIG_DIR}" || { echo "[Error]: git clone failed! Exiting."; exit 1; }
 fi
 
 
@@ -39,7 +42,7 @@ if [[ $1 == "pull" ]]; then
   echo "========================================================================"
   mkdir -p ${BACKUP_DIR}
   for item in "${FILE_LST[@]}"; do
-    cp -f ${item} "${BACKUP_DIR}"
+    cp -rf ${item} "${BACKUP_DIR}"
     echo "Backup: ${BACKUP_DIR} <- ${item}"
   done
 
@@ -47,11 +50,11 @@ if [[ $1 == "pull" ]]; then
   echo "========================================================================"
   echo "                            Pull                                        "
   echo "========================================================================"
-  git pull
+  git pull  || { echo "[Error]: git pull failed! Exiting."; exit 1; }
   for ((i=0; i<${#FILE_TARGET_LST[@]}; i++)) do
     target="${FILE_TARGET_LST[$i]}"
     dest="${FILE_LST[$i]}"
-    cp -f "${CONFIG_DIR}/${target}" "$dest"
+    cp -rf "${CONFIG_DIR}/${target}" "$dest"
     echo "Update: ${dest} <- ${CONFIG_DIR}/${target}"
   done
 
@@ -64,7 +67,7 @@ elif [[ $1 == "push" ]]; then
   for ((i=0; i<${#FILE_TARGET_LST[@]}; i++)) do
     target="${FILE_TARGET_LST[$i]}"
     dest="${FILE_LST[$i]}"
-    cp -f "$dest" "${CONFIG_DIR}/${target}"
+    cp -rf "$dest" "${CONFIG_DIR}/${target}"
     echo "Update: ${dest} -> ${CONFIG_DIR}/${target}"
   done
 
@@ -72,7 +75,7 @@ elif [[ $1 == "push" ]]; then
   git add .
   git diff --cached
   git commit -m "$2"
-  git push
+  git push  || { echo "[Error]: git push failed! Exiting."; exit 1; }
 fi
 
 
