@@ -29,6 +29,7 @@ if [[ -d "${CONFIG_DIR}/.git" ]]; then
 else
   rm -rf ${CONFIG_DIR}
   mkdir -p ${CONFIG_DIR}
+  cd ${CONFIG_DIR}
   git clone git@github.com:GDTR12/config.git "${CONFIG_DIR}" || { echo "[Error]: git clone failed! Exiting."; exit 1; }
 fi
 
