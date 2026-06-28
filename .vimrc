@@ -17,3 +17,8 @@ vnoremap <leader>p "+p
 " Space + P：从系统剪切板粘贴到光标前
 nnoremap <leader>P "+P
 vnoremap <leader>P "+P
+
+let skip_defaults_vim=1
+syntax on
+set nu!
+set autoindent
